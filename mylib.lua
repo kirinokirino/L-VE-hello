@@ -33,7 +33,6 @@ end
 
 polygon = function(world, points)
   --- creates a physical polygon and adds it to the world
-  print("points - ", points)
   local polygon = {}
   local pts = {}
   assert(type(points) == "table")
