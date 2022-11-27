@@ -1,17 +1,21 @@
 require "mylib"
 
-local world = love.physics.newWorld(0, 100)
+local world, triangle, bar;
 
-local triangle = {}
-triangle.body = love.physics.newBody(world, 150, 0, 'dynamic')
-triangle.body:setMass(32)
-triangle.shape = love.physics.newPolygonShape(100,100,200,100,200,200)
-triangle.fixture = love.physics.newFixture(triangle.body, triangle.shape)
+function love.load()
+  world = love.physics.newWorld(0, 100)
 
-local bar_origin = point(-20,450)
-local bar_rect = rect(bar_origin, 700, 50)
-local bar = polygon(world, bar_rect:points())
-bar.body:setType('static')
+  triangle = {}
+  triangle.body = love.physics.newBody(world, 150, 0, 'dynamic')
+  triangle.body:setMass(32)
+  triangle.shape = love.physics.newPolygonShape(100,100,200,100,200,200)
+  triangle.fixture = love.physics.newFixture(triangle.body, triangle.shape)
+
+  local bar_origin = point(-20,450)
+  local bar_rect = rect(bar_origin, 700, 50)
+  bar = polygon(world, bar_rect:points())
+  bar.body:setType('static')
+end
 
 love.update = function(delta)
   world:update(delta)
