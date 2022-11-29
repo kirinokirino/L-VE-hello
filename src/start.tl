@@ -1,5 +1,4 @@
 require "src/mylib"
-global love = require "love"
 
 local world: love.physics.World
 local shapes: {PhysicsObject}
@@ -17,7 +16,7 @@ function love.load()
   }
 
   shapes = {}
-  local triangle: PhysicsObject = {}
+  local triangle = {} as PhysicsObject
   triangle.body = love.physics.newBody(world, 150, 0, 'dynamic')
   triangle.body:setMass(32)
   triangle.shape = love.physics.newPolygonShape(100,100,200,100,200,200)
@@ -50,7 +49,7 @@ love.keypressed = function(key: love.keyboard.KeyConstant, scancode: love.keyboa
   print(key, " was pressed, scancode: ", scancode)
   if (isrepeat) then return end
   if (key == 'escape') then love.event.quit() end
-  if (key == '\'') then
+  if (key == "'") then
     print(whats(shapes))
   end
 end

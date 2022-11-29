@@ -1,12 +1,5 @@
-global whats = function(...)
-  local result = ""
-  for i, arg in pairs{...} do
-    result = string.format("%s%s", result, what(arg, 0))
-  end
-  return result
-end
 
-global what = function(this: any, depth: number)
+global what = function(this: any, depth: number): string
   if (type(depth) == 'number' and depth > 5) then return "..." end
   if (type(depth) == 'nil') then depth = 0 end
   depth = depth + 1
@@ -20,7 +13,7 @@ global what = function(this: any, depth: number)
   elseif (type(this) == 'table') then
     result = string.format("%s%s%s", padding, tostring(this), " which is a table with:\n")
     local lines = ""
-    for k, v in pairs(this) do
+    for k, v in pairs(this as table) do
       lines = string.format("%s%s%s:%s\n", lines, padding, k, string.sub(what(v, depth), depth))
     end
     result = string.format("%s%s", result, lines)
@@ -42,6 +35,14 @@ global what = function(this: any, depth: number)
   return result
 end
 
+global whats = function(...): string
+  local result = ""
+  for _i, arg in ipairs{... as any} do
+    result = string.format("%s%s", result, what(arg, 0))
+  end
+  return result
+end
+
 global record Mouse
     lmb: boolean
     lmb_pressed_at: Point
@@ -57,7 +58,7 @@ end
 global point = function(x: number, y:number): Point
   --- creates a point where x and y are numbers
   local point = {["x"] = x, ["y"] = y} as Point
-  setmetatable(point, {["__tostring"] = function(v) return string.format("point (%s, %s)", v.x, v.y) end})
+  setmetatable(point, {["__tostring"] = function(v: Point): string return string.format("point (%s, %s)", v.x, v.y) end})
   return point
 end
 
@@ -119,7 +120,7 @@ end
 
 global rect = function(a1: Point, a2: any, a3: any): Rect
 
-  local rect
+  local rect: Rect
   if (type(a2) == 'number' and type(a2) == 'number') then
     -- treating a2 as width and a3 as height
     rect = rect1(a1, a2 as number, a3 as number)
@@ -128,7 +129,7 @@ global rect = function(a1: Point, a2: any, a3: any): Rect
     -- treating a1 and a2 as points
     rect = rect2(a1, a2 as Point)
     end
-  setmetatable(rect, {["__tostring"] = function(v) return string.format("rect at (%s, %s) of size (%s, %s)", v.x, v.y, v.w, v.h) end})
+  setmetatable(rect, {["__tostring"] = function(v:Rect):string return string.format("rect at (%s, %s) of size (%s, %s)", v.x, v.y, v.w, v.h) end})
   return rect
 end
 
@@ -141,7 +142,7 @@ end
 
 global polygon = function(world: love.physics.World, points: {Point}): PhysicsObject
   --- creates a physical polygon and adds it to the world
-  local polygon: PhysicsObject = {}
+  local polygon = {} as PhysicsObject
   local pts: {number} = {}
   local origin: Point = {}
   assert(type(points) == "table")
