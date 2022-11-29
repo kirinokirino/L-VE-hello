@@ -1,4 +1,6 @@
 require "src/mylib"
+require "src/events"
+require "src/camera"
 
 local world: love.physics.World
 local shapes: {PhysicsObject}
@@ -36,6 +38,7 @@ love.update = function(delta: number)
 end
 
 love.draw = function()
+  camera:set()
   for _i, shape in ipairs(shapes) do
     love.graphics.polygon('line', shape.body:getWorldPoints(shape.shape:getPoints()))
   end
@@ -43,15 +46,13 @@ love.draw = function()
   if (mouse.lmb) then
     draw_rect(mouse.selection)
   end
+  camera:unset()
 end
 
 love.keypressed = function(key: love.keyboard.KeyConstant, scancode: love.keyboard.Scancode, isrepeat: boolean)
-  print(key, " was pressed, scancode: ", scancode)
-  if (isrepeat) then return end
   if (key == 'escape') then love.event.quit() end
-  if (key == "'") then
-    print(whats(shapes))
-  end
+  if (isrepeat) then return end
+  events.keyboard:press(scancode)
 end
 
 love.mousepressed = function(x: number, y: number, button: number, _istouch: boolean, _presses: number)

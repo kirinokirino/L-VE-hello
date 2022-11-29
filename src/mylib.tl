@@ -1,5 +1,5 @@
-
-global what = function(this: any, depth: number): string
+global what: function(this: any, depth: number): string
+what = function(this: any, depth: number): string
   if (type(depth) == 'number' and depth > 5) then return "..." end
   if (type(depth) == 'nil') then depth = 0 end
   depth = depth + 1
@@ -37,8 +37,8 @@ end
 
 global whats = function(...): string
   local result = ""
-  for _i, arg in ipairs{... as any} do
-    result = string.format("%s%s", result, what(arg, 0))
+  for _i, a in ipairs{... as any} do
+    result = string.format("%s%s", result, what(a, 0))
   end
   return result
 end
@@ -53,13 +53,24 @@ end
 global record Point
     x: number
     y: number
+    metamethod __add: function(Point, Point): Point
+    metamethod __tostring: function(Point): string
 end
 
-global point = function(x: number, y:number): Point
+global point: function(x: number, y: number): Point
+point = function(x: number, y:number): Point
   --- creates a point where x and y are numbers
-  local point = {["x"] = x, ["y"] = y} as Point
-  setmetatable(point, {["__tostring"] = function(v: Point): string return string.format("point (%s, %s)", v.x, v.y) end})
-  return point
+  local p = {["x"] = x, ["y"] = y} as Point
+  setmetatable(p, {
+    ["__tostring"] = function(v: Point): string
+      return string.format("point (%s, %s)", v.x, v.y)
+    end,
+    ["__add"] = function(rhs: Point, lhs: Point): Point
+      return point(rhs.x + lhs.x, rhs.y + lhs.y)
+    end,
+    }
+  )
+  return p
 end
 
 global record Rect
@@ -146,14 +157,14 @@ global polygon = function(world: love.physics.World, points: {Point}): PhysicsOb
   local pts: {number} = {}
   local origin: Point = {}
   assert(type(points) == "table")
-  for i, point in ipairs(points) do
-    assert(type(point.x) == "number")
-    assert(type(point.y) == "number")
+  for i, p in ipairs(points) do
+    assert(type(p.x) == "number")
+    assert(type(p.y) == "number")
     if (i == 1) then
-      origin = point
+      origin = p
     end
-    pts[i*2-1] = point.x - origin.x
-    pts[i*2] = point.y - origin.y
+    pts[i*2-1] = p.x - origin.x
+    pts[i*2] = p.y - origin.y
   end
 
   polygon.body = love.physics.newBody(world, origin.x, origin.y, 'dynamic')
