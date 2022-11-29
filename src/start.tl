@@ -51,7 +51,7 @@ love.keypressed = function(key: love.keyboard.KeyConstant, scancode: love.keyboa
   if (isrepeat) then return end
   if (key == 'escape') then love.event.quit() end
   if (key == '\'') then
-    print(whats(whats))
+    print(whats(shapes))
   end
 end
 

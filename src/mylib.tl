@@ -18,7 +18,7 @@ global what = function(this: any, depth: number)
   elseif (type(this) == 'string') then
     result = string.format("%s%s%s", padding, tostring(this), " is a string")
   elseif (type(this) == 'table') then
-    result = string.format("%s%s%s", padding, tostring(this), " is a table with:\n")
+    result = string.format("%s%s%s", padding, tostring(this), " which is a table with:\n")
     local lines = ""
     for k, v in pairs(this) do
       lines = string.format("%s%s%s:%s\n", lines, padding, k, string.sub(what(v, depth), depth))
@@ -29,7 +29,7 @@ global what = function(this: any, depth: number)
   elseif (type(this) == 'nil') then
     result = string.format("%s%s%s", padding, tostring(this), " is a nil")
   elseif (type(this) == 'function') then
-    result = string.format("%s%s%s", padding, tostring(this), " is a function \n")
+    result = string.format("%s%s%s", padding, tostring(this), " is a function")
   elseif (type(this) == 'userdata') then
     -- TODO
     result = string.format("%s%s%s", padding, tostring(this), " is userdata")
@@ -49,7 +49,6 @@ global record Mouse
     selection: Rect
 end
 
-
 global record Point
     x: number
     y: number
@@ -57,7 +56,9 @@ end
 
 global point = function(x: number, y:number): Point
   --- creates a point where x and y are numbers
-  return {["x"] = x, ["y"] = y}
+  local point = {["x"] = x, ["y"] = y} as Point
+  setmetatable(point, {["__tostring"] = function(v) return string.format("point (%s, %s)", v.x, v.y) end})
+  return point
 end
 
 global record Rect
@@ -117,14 +118,18 @@ local rect1 = function(p: Point, w: number, h: number): Rect
 end
 
 global rect = function(a1: Point, a2: any, a3: any): Rect
+
+  local rect
   if (type(a2) == 'number' and type(a2) == 'number') then
     -- treating a2 as width and a3 as height
-    return rect1(a1, a2 as number, a3 as number)
+    rect = rect1(a1, a2 as number, a3 as number)
   else
     assert(type(a3) == 'nil')
     -- treating a1 and a2 as points
-    return rect2(a1, a2 as Point)
+    rect = rect2(a1, a2 as Point)
     end
+  setmetatable(rect, {["__tostring"] = function(v) return string.format("rect at (%s, %s) of size (%s, %s)", v.x, v.y, v.w, v.h) end})
+  return rect
 end
 
 global record PhysicsObject
