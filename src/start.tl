@@ -46,9 +46,13 @@ love.draw = function()
   end
 end
 
-love.keypressed = function(key: love.keyboard.KeyConstant, _scancode: love.keyboard.Scancode, isrepeat: boolean)
+love.keypressed = function(key: love.keyboard.KeyConstant, scancode: love.keyboard.Scancode, isrepeat: boolean)
+  print(key, " was pressed, scancode: ", scancode)
   if (isrepeat) then return end
   if (key == 'escape') then love.event.quit() end
+  if (key == '\'') then
+    print(whats(whats))
+  end
 end
 
 love.mousepressed = function(x: number, y: number, button: number, _istouch: boolean, _presses: number)

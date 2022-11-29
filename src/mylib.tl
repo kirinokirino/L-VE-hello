@@ -1,3 +1,47 @@
+global whats = function(...)
+  local result = ""
+  for i, arg in pairs{...} do
+    result = string.format("%s%s", result, what(arg, 0))
+  end
+  return result
+end
+
+global what = function(this: any, depth: number)
+  if (type(depth) == 'number' and depth > 5) then return "..." end
+  if (type(depth) == 'nil') then depth = 0 end
+  depth = depth + 1
+
+  local result = ""
+  local padding = string.rep("\t", depth-1)
+  if (type(this) == 'number') then
+    result = string.format("%s%s%s", padding, tostring(this), " is a number")
+  elseif (type(this) == 'string') then
+    result = string.format("%s%s%s", padding, tostring(this), " is a string")
+  elseif (type(this) == 'table') then
+    result = string.format("%s%s%s", padding, tostring(this), " is a table with:\n")
+    local lines = ""
+    for k, v in pairs(this) do
+      lines = string.format("%s%s%s:%s\n", lines, padding, k, string.sub(what(v, depth), depth))
+    end
+    result = string.format("%s%s", result, lines)
+  elseif (type(this) == 'boolean') then
+    result = string.format("%s%s%s", padding, tostring(this), " is a boolean")
+  elseif (type(this) == 'nil') then
+    result = string.format("%s%s%s", padding, tostring(this), " is a nil")
+  elseif (type(this) == 'function') then
+    result = string.format("%s%s%s", padding, tostring(this), " is a function \n")
+  elseif (type(this) == 'userdata') then
+    -- TODO
+    result = string.format("%s%s%s", padding, tostring(this), " is userdata")
+  elseif (type(this) == 'thread') then
+    result = string.format("%s%s%s", padding, tostring(this), " is a thread")
+  elseif (true) then
+    print("error: ", this, type(this))
+    assert(false, "couldn't recognize type")
+  end
+  return result
+end
+
 global record Mouse
     lmb: boolean
     lmb_pressed_at: Point
@@ -39,12 +83,12 @@ local rect2 = function(p1: Point, p2: Point): Rect
   local max_x = math.max(p1.x, p2.x)
   local max_y = math.max(p1.y, p2.y)
   return {
-    ["x"] = min_x, ["y"] = min_y, ["w"] =  max_x - min_x, ["h"] = max_y - min_y, 
+    ["x"] = min_x, ["y"] = min_y, ["w"] =  max_x - min_x, ["h"] = max_y - min_y,
     points = function(self: Rect): {Point, Point, Point, Point}
-      return { 
-        point(self.x, self.y), 
+      return {
+        point(self.x, self.y),
         point(self.x + self.w, self.y),
-        point(self.x + self.w, self.y + self.h), 
+        point(self.x + self.w, self.y + self.h),
         point(self.x, self.y + self.h)
       }
     end,
@@ -60,12 +104,12 @@ local rect1 = function(p: Point, w: number, h: number): Rect
   assert(type(w) == "number")
   assert(type(h) == "number")
   return {
-    ["x"] = p.x, ["y"] = p.y, ["w"] = w, ["h"] = h, 
+    ["x"] = p.x, ["y"] = p.y, ["w"] = w, ["h"] = h,
     points = function(self: Rect): {Point, Point, Point, Point}
-      return { 
-        point(self.x, self.y), 
+      return {
+        point(self.x, self.y),
         point(self.x + self.w, self.y),
-        point(self.x + self.w, self.y + self.h), 
+        point(self.x + self.w, self.y + self.h),
         point(self.x, self.y + self.h)
       }
     end,
@@ -105,9 +149,9 @@ global polygon = function(world: love.physics.World, points: {Point}): PhysicsOb
     pts[i*2-1] = point.x - origin.x
     pts[i*2] = point.y - origin.y
   end
-  
+
   polygon.body = love.physics.newBody(world, origin.x, origin.y, 'dynamic')
   polygon.shape = love.physics.newPolygonShape(table.unpack(pts))
   polygon.fixture = love.physics.newFixture(polygon.body, polygon.shape as love.physics.Shape)
   return polygon
-end 
+end
