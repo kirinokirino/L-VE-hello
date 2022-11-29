@@ -55,6 +55,7 @@ global record Point
     y: number
     metamethod __add: function(Point, Point): Point
     metamethod __tostring: function(Point): string
+    metamethod __unm: function(Point): Point
 end
 
 global point: function(x: number, y: number): Point
@@ -62,11 +63,17 @@ point = function(x: number, y:number): Point
   --- creates a point where x and y are numbers
   local p = {["x"] = x, ["y"] = y} as Point
   setmetatable(p, {
-    ["__tostring"] = function(v: Point): string
-      return string.format("point (%s, %s)", v.x, v.y)
+    ["__tostring"] = function(self: Point): string
+      return string.format("point (%s, %s)", self.x, self.y)
     end,
-    ["__add"] = function(rhs: Point, lhs: Point): Point
-      return point(rhs.x + lhs.x, rhs.y + lhs.y)
+    ["__add"] = function(self: Point, rhs: Point): Point
+      return point(rhs.x + self.x, rhs.y + self.y)
+    end,
+    ["__sub"] = function(self: Point, rhs: Point): Point
+      return point(self.x + (-rhs.x), self.y + (-rhs.y))
+    end,
+    ["__unm"] = function(self: Point): Point
+      return point(-self.x, -self.y)
     end,
     }
   )

@@ -42,9 +42,16 @@ function camera:rotate(dr: number)
 end
 
 function camera:scale(sx: number, sy: number)
+  local old_width = self.scaleX * love.graphics.getWidth()
+  local old_height = self.scaleY * love.graphics.getHeight()
+
   sx = sx or 1
   self.scaleX = self.scaleX * sx
   self.scaleY = self.scaleY * (sy or sx)
+
+  local new_width = self.scaleX * love.graphics.getWidth()
+  local new_height = self.scaleY * love.graphics.getHeight()
+  self.pos = self.pos - point((new_width - old_width) / 2, (new_height - old_height) / 2)
 end
 
 function camera:setPosition(position: Point)

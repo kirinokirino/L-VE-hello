@@ -40,9 +40,9 @@ end
 love.draw = function()
   camera:set()
   for _i, shape in ipairs(shapes) do
-    love.graphics.polygon('line', shape.body:getWorldPoints(shape.shape:getPoints()))
+    love.graphics.polygon('fill', shape.body:getWorldPoints(shape.shape:getPoints()))
   end
-  love.graphics.polygon('line', bar.body:getWorldPoints(bar.shape:getPoints()))
+  love.graphics.polygon('fill', bar.body:getWorldPoints(bar.shape:getPoints()))
   if (mouse.lmb) then
     draw_rect(mouse.selection)
   end
