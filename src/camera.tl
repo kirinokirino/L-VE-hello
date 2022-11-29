@@ -13,6 +13,7 @@ global record Camera
   scale: function(Camera, number, number)
   setPosition: function(Camera, Point)
   setScale: function(Camera, number, number)
+  fromScreenPosition: function(Camera, Point): Point
 end
 
 global camera = {} as Camera
@@ -53,4 +54,8 @@ end
 function camera:setScale(sx: number, sy: number)
   self.scaleX = sx or self.scaleX
   self.scaleY = sy or self.scaleY
+end
+
+function camera:fromScreenPosition(position: Point): Point
+  return point(position.x * self.scaleX + self.pos.x, position.y * self.scaleY + self.pos.y)
 end

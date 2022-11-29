@@ -58,7 +58,7 @@ end
 love.mousepressed = function(x: number, y: number, button: number, _istouch: boolean, _presses: number)
   if (button == 1) then
     mouse.lmb = true
-    mouse.lmb_pressed_at = point(x, y)
+    mouse.lmb_pressed_at = camera:fromScreenPosition(point(x, y))
     mouse.selection.x = x
     mouse.selection.y = y
   end
@@ -66,14 +66,14 @@ end
 
 love.mousemoved = function(x: number, y: number, _dx: number, _dy: number, _istouch: boolean)
   if (mouse.lmb) then
-    mouse.selection = rect(mouse.lmb_pressed_at, point(x, y))
+    mouse.selection = rect(mouse.lmb_pressed_at, camera:fromScreenPosition(point(x, y)))
   end
 end
 
 love.mousereleased = function(x: number, y: number, button: number, _istouch: boolean, _presses: number)
   if (button == 1) then
     mouse.lmb = false
-    mouse.lmb_released_at = point(x, y)
+    mouse.lmb_released_at = camera:fromScreenPosition(point(x, y))
 
     local new_rect = rect(mouse.lmb_pressed_at, mouse.lmb_released_at)
     local poly = polygon(world, new_rect:points())
