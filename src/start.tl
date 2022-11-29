@@ -1,4 +1,4 @@
-require "mylib"
+require "src/mylib"
 global love = require "love"
 
 local world: love.physics.World
@@ -15,7 +15,7 @@ function love.load()
     ['lmb_released_at'] = point(0,0),
     ['selection'] = rect(point(0,0), 0, 0),
   }
-  
+
   shapes = {}
   local triangle: PhysicsObject = {}
   triangle.body = love.physics.newBody(world, 150, 0, 'dynamic')
@@ -25,7 +25,7 @@ function love.load()
   triangle.fixture:setRestitution(0.6)
   triangle.body:setAngularVelocity(1.5)
   table.insert(shapes, triangle)
-  
+
   local bar_origin = point(-20,450)
   local bar_rect = rect(bar_origin, 700, 50)
   bar = polygon(world, bar_rect:points())
@@ -65,12 +65,12 @@ love.mousemoved = function(x: number, y: number, _dx: number, _dy: number, _isto
     mouse.selection = rect(mouse.lmb_pressed_at, point(x, y))
   end
 end
-  
+
 love.mousereleased = function(x: number, y: number, button: number, _istouch: boolean, _presses: number)
   if (button == 1) then
     mouse.lmb = false
     mouse.lmb_released_at = point(x, y)
-    
+
     local new_rect = rect(mouse.lmb_pressed_at, mouse.lmb_released_at)
     local poly = polygon(world, new_rect:points())
     table.insert(shapes, poly)

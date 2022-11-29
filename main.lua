@@ -1,3 +1,3 @@
-local tl = require("tl")
+tl = require("./plugin/tl")
 tl.loader()
-require("game")
+require("src/start")
