@@ -54,6 +54,7 @@ global record Point
     x: number
     y: number
     metamethod __add: function(Point, Point): Point
+    metamethod __sub: function(Point, Point): Point
     metamethod __tostring: function(Point): string
     metamethod __unm: function(Point): Point
 end
